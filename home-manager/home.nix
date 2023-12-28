@@ -205,7 +205,7 @@ in {
           {
             block = "time";
             interval = 1;
-            format = "$icon $timestamp.datetime(f:'%a %Y/%m/%d')";
+            format = "$icon $timestamp.datetime(f:'%a %Y/%m/%d %I:%M%p')";
           }
         ];
       };
