@@ -215,6 +215,11 @@ in {
 
   programs.starship = {
     enable = true;
+    settings = {
+      username.show_always = true;
+      memory_usage.disabled = false;
+      time.disabled = false;
+    };
   };
 
   programs.tmux = {

@@ -104,6 +104,12 @@
      alsa-utils
   ];
 
+  fonts.packages = with pkgs; [
+    fira-code
+    fira-code-symbols
+    font-awesome
+  ];
+
   # Home manager config
   # home-manager.users.user = { pkgs, ... }: {
     # home.packages = [ pkgs.httpie ];
