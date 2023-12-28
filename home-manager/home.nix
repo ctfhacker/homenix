@@ -155,6 +155,7 @@ in {
       s = "status";
       co = "checkout";
       cob = "checkout -b";
+      d = "diff --color=always";
     };
   };
 
