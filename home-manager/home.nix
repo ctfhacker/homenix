@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, outputs, inputs, specialArgs, options, modulesPath, nur }:
 
 let
   i3_mod = "Mod1"; # Left Alt/Option
@@ -11,7 +11,6 @@ in {
   home.stateVersion = "23.11";
   home.packages = with pkgs; [
     bat
-    firefox
     helix
     hexyl
     htop
@@ -23,6 +22,7 @@ in {
     zip
   ];
 
+  # Enable vim mode in bash with a couple custom keybindings
   home.file.".inputrc".text = ''
   set editing-mode vi
   set keymap vi-command
@@ -140,11 +140,74 @@ in {
     bashrcExtra = ''
     '';
     shellAliases = {
+      "rm" = "rm -i"; # Always prompt before a deletion
       "vim" = "hx";
       ".." = "cd ..";
       "..." = "cd ../..";
     };
   };
+
+  programs.firefox.enable = true;
+  programs.firefox.profiles = 
+    let
+        extensions = with pkgs.nur.repos.rycee.firefox-addons; [
+          bitwarden
+          ublock-origin
+          vimium
+        ];
+
+        settings = {
+          "app.update.auto" = true;
+          "browser.startup.homepage" = "https://lobste.rs";
+          "browser.urlbar.placeholderName" = "DuckDuckGo";
+          "services.sync.declinedEngines" = "addons,passwords,prefs";
+          "privacy.trackingprotection.enabled" = true;
+          "privacy.trackingprotection.socialtracking.enabled" = true;
+          "privacy.trackingprotection.socialtracking.annotate.enabled" = true;
+        };
+
+        search = {
+          force = true;
+          default = "DuckDuckGo";
+          order = [ "DuckDuckGo" "Google" ];
+
+          engines = {
+            "Nix Packages" = {
+              urls = [
+                {
+                  template = "https://search.nixos.org/packages";
+                  params = [
+                    {
+                      name = "type";
+                      value = "packages";
+                    }
+                    {
+                      name = "query";
+                      value = "{searchTerms}";
+                    }
+                  ];
+                }
+              ];
+
+              icon = "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
+              definedAliases = ["@np"];
+            };
+
+            "NixOS Wiki" = {
+              urls = [{template = "https://nixos.wiki/index.php?search={searchTerms}";}];
+              iconUpdateURL = "https://nixos.wiki/favicon.png";
+              updateInterval = 24 * 60 * 60 * 1000; # every day
+              definedAliases = ["@nw"];
+            };
+          };
+        };
+    in
+    {
+      home = {
+        inherit extensions search;
+        id = 0;
+      };
+    };
 
   programs.git = {
     enable = true;

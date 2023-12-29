@@ -1,8 +1,8 @@
-# Edit this configuration file to define what should be installed on
-# your system.  Help is available in the configuration.nix(5) man page
-# and in the NixOS manual (accessible by running ‘nixos-help’).
+  # Edit this configuration file to define what should be installed on
+  # your system.  Help is available in the configuration.nix(5) man page
+  # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, ... }:
+  { lib, config, pkgs, ... }:
 
 {
   imports =
@@ -25,16 +25,16 @@
   # Enable networking
   networking.networkmanager.enable = true;
 
+  # sound.enable = true;
+  hardware.pulseaudio.enable = lib.mkForce false;
   sound.enable = false;
-  hardware.pulseaudio.enable = false;
-  security.rtkit.enable = true;
+  security.rtkit.enable = config.services.pipewire.enable;
   services.pipewire = {
     enable = true;
     audio.enable = true;
-    pulse.enable = true;
     alsa.enable = true;
     alsa.support32Bit = true;
-    jack.enable = true;
+    pulse.enable = true;
     wireplumber.enable = true;
   };
 
@@ -84,13 +84,12 @@
     name = "user";
     home = "/home/user";
     description = "user";
-    extraGroups = [ "networkmanager" "wheel" "audio" "sound" "video" ];
+    extraGroups = [ "networkmanager" "wheel" "audio" "video" ];
     packages = with pkgs; [];
   };
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
-  nixpkgs.config.pulseaudio = true;
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
@@ -102,6 +101,10 @@
      tmux
      git
      alsa-utils
+     pulseaudio
+     pavucontrol
+     usbutils
+     ddcutil
   ];
 
   fonts.packages = with pkgs; [
@@ -143,5 +146,4 @@
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "23.11"; # Did you read the comment?
-
 }
