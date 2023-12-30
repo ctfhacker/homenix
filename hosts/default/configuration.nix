@@ -2,18 +2,21 @@
   # your system.  Help is available in the configuration.nix(5) man page
   # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-  { lib, config, pkgs, ... }:
+  { lib, config, pkgs, inputs, ... }:
 
 {
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
+
+      # Import home-manager
+      inputs.home-manager.nixosModules.default
     ];
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-
+  boot.kernelPackages = pkgs.linuxPackages_latest;
 
   networking.hostName = "nixos"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
@@ -67,6 +70,7 @@
 
     desktopManager.xterm.enable = false;
     displayManager.defaultSession = "none+i3";
+    displayManager.gdm.autoSuspend = false;
 
     windowManager.i3  = {
       enable = true;
@@ -90,7 +94,6 @@
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
-
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
   # List packages installed in system profile. To search, run:
@@ -112,6 +115,13 @@
     fira-code-symbols
     font-awesome
   ];
+
+  home-manager = {
+    extraSpecialArgs = { inherit inputs; };
+    users = {
+      "user" = import ./home.nix;
+    };
+  };
 
   # Home manager config
   # home-manager.users.user = { pkgs, ... }: {

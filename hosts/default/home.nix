@@ -1,4 +1,4 @@
-{ config, pkgs, lib, outputs, inputs, specialArgs, options, modulesPath, nur }:
+{ config, pkgs, lib, outputs, inputs, specialArgs, options, modulesPath, nixosConfig, osConfig }:
 
 let
   i3_mod = "Mod1"; # Left Alt/Option
@@ -10,16 +10,21 @@ in {
   home.homeDirectory = "/home/user";
   home.stateVersion = "23.11";
   home.packages = with pkgs; [
-    bat
-    helix
-    hexyl
+    alacritty # Terminal emulator
+    bat       # Better cat
+    docker    # Containers
+    fd        # Better find
+    helix     # Editor
+    hexyl     # Better xxd
     htop
-    less
-    radare2
+    less      # Less is more
+    lsd       # 
+    radare2   # Disassembly
     ripgrep
     unzip
     xxd
     zip
+    unzip
   ];
 
   # Enable vim mode in bash with a couple custom keybindings
@@ -72,7 +77,6 @@ in {
   ### Programs to enable                                           ###
   ####################################################################
 
-  programs.alacritty.enable = true;
 
   programs.autorandr = {
     enable = true;
@@ -138,22 +142,38 @@ in {
   programs.bash = {
     enable = true;
     bashrcExtra = ''
+    if [ "$TMUX" = "" ]; then TERM=screen-256color; tmux -2; fi
     '';
+
     shellAliases = {
-      "rm" = "rm -i"; # Always prompt before a deletion
-      "vim" = "hx";
       ".." = "cd ..";
       "..." = "cd ../..";
+      "rm" = "rm -i"; # Always prompt before a deletion
+      "cp" = "cp -i"; # Always prompt before a deletion
+      "vim" = "hx";
+      "cat" = "bat --theme \"Solarized (dark)\"";
+      "l" = "lsd -lah";
+      "ls" = "lsd";
+      "ll" = "lsd -la";
+      "tree" = "lsd -la --tree";
+      "goto_mac" = "for b in 35 36; do sudo ddcutil --bus $b setvcp 60 17; done";
+      "goto_nix" = "for b in 35 36; do sudo ddcutil --bus $b setvcp 60 15; done";
     };
   };
 
   programs.firefox.enable = true;
-  programs.firefox.profiles = 
-    let
-        extensions = with pkgs.nur.repos.rycee.firefox-addons; [
+  programs.firefox = {
+    profiles.user = {
+        extensions = with inputs.firefox-addons.packages."x86_64-linux"; [
           bitwarden
+          darkreader
           ublock-origin
+          sponsorblock
           vimium
+        ];
+
+        bookmarks = [
+          
         ];
 
         settings = {
@@ -201,11 +221,6 @@ in {
             };
           };
         };
-    in
-    {
-      home = {
-        inherit extensions search;
-        id = 0;
       };
     };
 
