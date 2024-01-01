@@ -17,6 +17,7 @@ in {
     helix     # Editor
     hexyl     # Better xxd
     htop
+    gnumake   # make
     less      # Less is more
     lsd       # 
     radare2   # Disassembly
