@@ -77,7 +77,6 @@ in {
   ### Programs to enable                                           ###
   ####################################################################
 
-
   programs.autorandr = {
     enable = true;
 
@@ -241,8 +240,60 @@ in {
     enable = true;
     settings = {
       theme = "solarized_dark";
+
       editor = {
         line-number = "relative";
+        color-modes = true;
+        gutters = [
+          "diagnostics"
+          "line-numbers"
+          "spacer"
+          "diff"
+        ];
+        lsp.display-inlay-hints = true;
+        rulers = [ 80 120 ];
+        smart-tab.enable = true;
+        soft-wrap.enable = true;
+        statusline = {
+          left = [
+            "mode"
+            "spinner"
+            "version-control"
+            "file-name"
+            "file-modification-indicator"
+            "read-only-indicator"
+          ];
+          center = [ ];
+          right = [
+            "register"
+            "file-type"
+            "diagnostics"
+            "selections"
+            "position"
+            "position-percentage"
+          ];
+        };
+        whitespace = {
+          render.space = "all";
+          render.tab = "all";
+          # render.newline = "all";
+          characters.space = " ";
+          characters.nbsp = "⍽";
+          characters.tab = "→";
+          # characters.newline = "⏎";
+          characters.tabpad = "-";
+        };
+      };
+
+      keys.normal = {
+        H = "goto_first_nonwhitespace";
+        L = "goto_line_end";
+        S = "split_selection_on_newline";
+      };
+      keys.select = {
+        H = "goto_line_start";
+        x = "extend_line";        # Same as normal
+        V = "extend_to_line_end"; # Same as normal
       };
     };
   };
