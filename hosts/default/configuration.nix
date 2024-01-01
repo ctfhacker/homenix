@@ -88,7 +88,7 @@
     name = "user";
     home = "/home/user";
     description = "user";
-    extraGroups = [ "networkmanager" "wheel" "audio" "video" ];
+    extraGroups = [ "networkmanager" "wheel" "audio" "video" "docker" ];
     packages = with pkgs; [];
   };
 
@@ -128,6 +128,9 @@
   systemd.targets.suspend.enable = false;
   systemd.targets.hibernate.enable = false;
   systemd.targets.hybrid-sleep.enable = false;
+
+  # Enable virtualisation for docker daemon
+  virtualisation.docker.enable = true;
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
