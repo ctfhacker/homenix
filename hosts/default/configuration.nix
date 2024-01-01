@@ -68,8 +68,8 @@
     layout = "us";
     xkbVariant = "";
 
-    desktopManager.xterm.enable = false;
-    displayManager.defaultSession = "none+i3";
+    desktopManager.xterm.enable    = false;
+    displayManager.defaultSession  = "none+i3";
     displayManager.gdm.autoSuspend = false;
 
     windowManager.i3  = {
@@ -123,12 +123,11 @@
     };
   };
 
-  # Home manager config
-  # home-manager.users.user = { pkgs, ... }: {
-    # home.packages = [ pkgs.httpie ];
-    # programs.alacritty.enable = true; 
-    # home.stateVersion = "23.11";
-  # };
+  # Disable auto-suspend feature in GNOME
+  systemd.targets.sleep.enable = false;
+  systemd.targets.suspend.enable = false;
+  systemd.targets.hibernate.enable = false;
+  systemd.targets.hybrid-sleep.enable = false;
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
