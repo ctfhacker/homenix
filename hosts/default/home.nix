@@ -12,20 +12,24 @@ in {
   home.packages = with pkgs; [
     alacritty # Terminal emulator
     bat       # Better cat
+    bitwarden-cli # CLI password manager
+    clang     # Compiler
     docker    # Containers
     fd        # Better find
     helix     # Editor
     hexyl     # Better xxd
-    htop
+    htop      # Process monitoring
     gnumake   # make
     less      # Less is more
-    lsd       # 
-    radare2   # Disassembly
-    ripgrep
-    unzip
-    xxd
-    zip
-    unzip
+    lsd       # Better ls
+    radare2   # CLI Disassembly
+    ripgrep   # Better grep
+    rustup    # Obviously..
+    unzip     # unzip
+    zip       # zip
+  ] 
+  ++ lib.optionals stdenv.isLinux [
+    xorg.libX11
   ];
 
   # Enable vim mode in bash with a couple custom keybindings
