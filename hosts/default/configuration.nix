@@ -88,7 +88,7 @@
     name = "user";
     home = "/home/user";
     description = "user";
-    extraGroups = [ "networkmanager" "wheel" "audio" "video" "docker" ];
+    extraGroups = [ "networkmanager" "wheel" "audio" "video" "docker" "kvm" ];
     packages = with pkgs; [];
   };
 
