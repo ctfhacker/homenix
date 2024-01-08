@@ -249,6 +249,7 @@ in {
       editor = {
         line-number = "relative";
         color-modes = true;
+        true-color = true;
         gutters = [
           "diagnostics"
           "line-numbers"
@@ -256,7 +257,7 @@ in {
           "diff"
         ];
         lsp.display-inlay-hints = true;
-        rulers = [ 80 120 ];
+        rulers = [ 110 ];
         smart-tab.enable = true;
         soft-wrap.enable = true;
         statusline = {
