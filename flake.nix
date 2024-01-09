@@ -23,7 +23,7 @@
   let
     inherit (self) outputs;
     system = "x86_64-linux";
-    pkgs = nixpkgs.legagyPackages.${system};
+    pkgs = nixpkgs.legacyPackages.${system};
   in {
     # NixOS configuration entrypoint
     # Available through 'nixos-rebuild --flake .#your-hostname'
