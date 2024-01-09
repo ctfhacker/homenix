@@ -301,6 +301,9 @@ in {
         x = "extend_line";        # Same as normal
         V = "extend_to_line_end"; # Same as normal
       };
+      keys.insert = {
+        j.k = "normal_mode";
+      };
     };
   };
 
