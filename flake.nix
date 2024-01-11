@@ -40,7 +40,7 @@
         };
 
         modules = [
-          ("./profiles/" + profile + "/home.nix")
+          (./. + "/profiles" + ("/" + profile) + "/home.nix")
         ];
       };
     };
