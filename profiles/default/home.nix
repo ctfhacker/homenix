@@ -175,7 +175,7 @@ in {
       "tree" = "lsd -la --tree";
       "goto_mac" = "for b in 35 36; do sudo ddcutil --bus $b setvcp 60 17; done";
       "goto_nix" = "for b in 35 36; do sudo ddcutil --bus $b setvcp 60 15; done";
-      "pull_nix" = "popd ~/homenix ; git stash ; git pull ; git stash apply ; home-manager switch --flake .#user ; popd";
+      "pull_nix" = "pushd ~/homenix ; git stash ; git pull ; git stash apply ; home-manager switch --flake .#user ; popd";
       "nixnix" = "source $HOME/.nix-profile/etc/profile.d/nix.sh";
     };
   };
