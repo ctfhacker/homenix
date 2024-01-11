@@ -178,6 +178,7 @@ in {
       "pull_nix" = "pushd ~/homenix ; git stash ; git pull ; git stash apply ; home-manager switch --flake .#user ; popd";
       "nixnix" = "source $HOME/.nix-profile/etc/profile.d/nix.sh";
       "xxd" = "hexyl";
+      "reload" = "source ~/.bash_profile";
     };
   };
 
