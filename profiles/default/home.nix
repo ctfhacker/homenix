@@ -42,6 +42,7 @@ in {
     # Rust
     rustc
     cargo
+    cargo-watch
     rustfmt
     rust-analyzer
     clippy
