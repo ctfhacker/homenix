@@ -13,26 +13,38 @@ in {
   home.packages = with pkgs; [
     alacritty # Terminal emulator
     bat       # Better cat
-    clang     # Compiler
     docker    # Containers
     fd        # Better find
     helix     # Editor
     hexyl     # Better xxd
     htop      # Process monitoring
     gnumake   # make
+    man-pages # Man pages
+    man-pages-posix # Man pages
     less      # Less is more
     lsd       # Better ls
     nil       # Nix Language Server
     radare2   # CLI Disassembly
     ripgrep   # Better grep
-    rustup    # Obviously..
     unzip     # unzip
     zip       # zip
+
+    # C
+    clang     # Compiler
+    clang-tools_16 # clangd, clang-format
+    vscode-extensions.llvm-org.lldb-vscode # Debug adapter for helix
 
     # Virtualization
     virt-manager
     libvirt
     qemu
+
+    # Rust
+    rustc
+    cargo
+    rustfmt
+    rust-analyzer
+    clippy
   ] 
   ++ lib.optionals stdenv.isLinux [
     xorg.libX11
