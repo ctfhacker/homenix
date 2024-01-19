@@ -24,10 +24,14 @@ in {
     less      # Less is more
     lsd       # Better ls
     nil       # Nix Language Server
-    radare2   # CLI Disassembly
     ripgrep   # Better grep
     unzip     # unzip
     zip       # zip
+    python3   # I guess..
+
+    # Debugger
+    pwndbg
+    radare2   # CLI Disassembly
 
     # C
     clang     # Compiler
@@ -46,6 +50,7 @@ in {
     rustfmt
     rust-analyzer
     clippy
+    (pkgs.callPackage ../../packages/binaryninja {})
   ] 
   ++ lib.optionals stdenv.isLinux [
     xorg.libX11
@@ -186,8 +191,8 @@ in {
       "ls" = "lsd";
       "ll" = "lsd -la";
       "tree" = "lsd -la --tree";
-      "goto_mac" = "for b in 35 36; do sudo ddcutil --bus $b setvcp 60 17; done";
-      "goto_nix" = "for b in 35 36; do sudo ddcutil --bus $b setvcp 60 15; done";
+      "goto_nix" = "for f in $(sudo ddcutil detect  | rg i2c | rev | cut -d'-' -f1 | rev); do sudo ddcutil --bus $f setvcp 60 15; done";
+      "goto_mac" = "for f in $(sudo ddcutil detect  | rg i2c | rev | cut -d'-' -f1 | rev); do sudo ddcutil --bus $f setvcp 60 17; done";
       "pull_nix" = "pushd ~/homenix ; git stash ; git pull ; git stash apply ; home-manager switch --flake .#user ; popd";
       "nixnix" = "source $HOME/.nix-profile/etc/profile.d/nix.sh";
       "xxd" = "hexyl";
@@ -417,5 +422,4 @@ in {
     bind-key \\ split-window -h
     '';
   };
-
-  }
+}
