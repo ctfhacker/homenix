@@ -15,6 +15,7 @@ in {
     bat       # Better cat
     docker    # Containers
     fd        # Better find
+    entr      # Generic run command on file modification
     helix     # Editor
     hexyl     # Better xxd
     htop      # Process monitoring
@@ -27,16 +28,24 @@ in {
     ripgrep   # Better grep
     unzip     # unzip
     zip       # zip
-    python3   # I guess..
+    (python3.withPackages (ps:
+      with ps; [
+        ipython
+        ipdb
+        pip
+        python-lsp-server
+      ]
+    ))
 
     # Debugger
     pwndbg
     radare2   # CLI Disassembly
 
     # C
-    clang     # Compiler
+    clang          # Compiler
     clang-tools_16 # clangd, clang-format
     vscode-extensions.llvm-org.lldb-vscode # Debug adapter for helix
+    stdenv.cc.cc.lib
 
     # Virtualization
     virt-manager
@@ -44,12 +53,14 @@ in {
     qemu
 
     # Rust
-    rustc
-    cargo
-    cargo-watch
-    rustfmt
+    # rustc
+    # cargo
+    # cargo-watch
+    # rustfmt
+    # clippy
+
+    rust-bin.nightly.latest.default
     rust-analyzer
-    clippy
     (pkgs.callPackage ../../packages/binaryninja {})
   ] 
   ++ lib.optionals stdenv.isLinux [
@@ -371,15 +382,18 @@ in {
             interval = 30;
             format = "$icon $available";
           }
+          /*
           {
             block = "net";
             interval = 10;
             format = "$icon $ip";
           }
+          */
           {
             block = "time";
             interval = 1;
-            format = "$icon $timestamp.datetime(f:'%a %Y/%m/%d %I:%M%p')";
+            # format = "$icon $timestamp.datetime(f:'%a %Y/%m/%d %I:%M%p')";
+            format = "$icon $timestamp.datetime(f:'%I:%M%p')";
           }
         ];
       };

@@ -1,7 +1,7 @@
 { 
-  stdenv, autoPatchelfHook, makeWrapper, unzip, requireFile, python3, libGL, zlib, 
+  stdenv, autoPatchelfHook, makeWrapper, unzip, requireFile, python311, libGL, zlib, 
   xcbutilwm, xcbutilimage, xcbutilkeysyms, xcbutilrenderutil, libxkbcommon, freetype,
-  fontconfig, wayland-scanner, dbus,
+  fontconfig, wayland-scanner, dbus,   
   ... 
 }:
 
@@ -18,7 +18,12 @@ stdenv.mkDerivation {
     autoPatchelfHook
     makeWrapper
     unzip
+    dbus
   ];
+
+  prePatch = ''
+    addAutoPatchelfSearchPath $out/opt
+  '';
 
   # error: auto-patchelf could not satisfy dependency libGL.so.1 
   # error: auto-patchelf could not satisfy dependency libz.so.1 
@@ -36,6 +41,13 @@ stdenv.mkDerivation {
     freetype          # libfreetype.so.6  
     fontconfig.lib
     wayland-scanner.out
+    (python311.withPackages (ps:
+      with ps; [
+        ipython
+        ipdb
+        pip
+      ]
+    ))
   ];
 
   autoPatchelfIgnoreMissingDeps = [
@@ -51,6 +63,10 @@ stdenv.mkDerivation {
     cp -r * $out/opt
     chmod +x $out/opt/binaryninja
 
+    # Symlink python for binja to use
+    ln -s ${python311}/lib/libpython3.11.so.1.0 $out/opt/
+
+    # Make the wrapper for the binja binary
     mkdir -p $out/bin
     makeWrapper $out/opt/binaryninja $out/bin/binaryninja
 
