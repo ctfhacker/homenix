@@ -12,6 +12,7 @@ in {
   home.stateVersion = "23.11";
   home.packages = with pkgs; [
     alacritty # Terminal emulator
+    bacon     # Rust command runner/tester
     bat       # Better cat
     docker    # Containers
     fd        # Better find
