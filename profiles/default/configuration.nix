@@ -67,6 +67,7 @@
     enable = true;
     layout = "us";
     xkbVariant = "";
+    xkbOptions = "ctrl:swapcaps";
 
     desktopManager.xterm.enable    = false;
     displayManager.defaultSession  = "none+i3";

@@ -3,6 +3,8 @@
 let
   i3_mod = "Mod1"; # Left Alt/Option
   has_gui = true;
+  # rustOverlay = builtins.fetchTarball "https://github.com/oxalica/rust-overlay/archive/master.tar.gz";
+  # pkgs.overlays = [ rustOverlay.overlays.default ];
 in {
   # Use home manager
   programs.home-manager.enable = true;
@@ -62,6 +64,8 @@ in {
 
     rust-bin.nightly.latest.default
     rust-analyzer
+
+    # Vulndev
     (pkgs.callPackage ../../packages/binaryninja {})
   ] 
   ++ lib.optionals stdenv.isLinux [
@@ -115,12 +119,12 @@ in {
   };
 
   # Default virt-manager config
-  dconf.settings = {
-    "org/virt-manager/virt-manager/connections" = {
-      autoconnect = ["qemu:///system"];
-      uris = ["qemu:///system"];
-    };
-  };
+  # dconf.settings = {
+    # "org/virt-manager/virt-manager/connections" = {
+      # autoconnect = ["qemu:///system"];
+      # uris = ["qemu:///system"];
+    # };
+  # };
 
   ####################################################################
   ### Programs to enable                                           ###
@@ -209,6 +213,7 @@ in {
       "nixnix" = "source $HOME/.nix-profile/etc/profile.d/nix.sh";
       "xxd" = "hexyl";
       "reload" = "source ~/.bash_profile";
+      "mirror" = "xrandr --output eDP-1 --mode 1920x1080 --output HDMI-1 --mode 1920x1080 --same-as eDP-1";
     };
   };
 
@@ -363,7 +368,7 @@ in {
         icons = "none";
         blocks = [
           {
-            block = "sound";
+            block = "battery";
           }
           {
             block = "cpu";
@@ -387,7 +392,8 @@ in {
           {
             block = "net";
             interval = 10;
-            format = "$icon $ip";
+            # format = "$icon $ip";
+            format = "$icon";
           }
           */
           {

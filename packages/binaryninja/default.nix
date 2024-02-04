@@ -11,7 +11,7 @@ stdenv.mkDerivation {
   src = requireFile {
     name = "BinaryNinja-dev.zip";
     url = "https://binary.ninja";
-    sha256 = "188azn87c9m7zwsklklqjbza7kaa0jgcsk7nb4byirkcxj07zwla";
+    sha256 = "1275c20iy4alfxrqwk0c3vqc92gv894sxc23niksgpxzbxj6pc03";
   };
 
   nativeBuildInputs = [
