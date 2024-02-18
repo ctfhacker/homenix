@@ -194,6 +194,7 @@ in {
     enable = true;
     bashrcExtra = ''
     if [ "$TMUX" = "" ]; then TERM=screen-256color; tmux -2; fi
+    eval "$(direnv hook bash)"
     '';
 
     shellAliases = {
@@ -215,6 +216,13 @@ in {
       "reload" = "source ~/.bash_profile";
       "mirror" = "xrandr --output eDP-1 --mode 1920x1080 --output HDMI-1 --mode 1920x1080 --same-as eDP-1";
     };
+  };
+
+  # Enable direnv to allow switching nix-shells on going to a new directory
+  programs.direnv = {
+    enable = true;
+    enableBashIntegration = true;
+    nix-direnv.enable = true;
   };
 
   programs.firefox.enable = has_gui;
