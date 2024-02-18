@@ -16,13 +16,16 @@ in {
     alacritty # Terminal emulator
     bacon     # Rust command runner/tester
     bat       # Better cat
+    cmake     # Build stuff..
     docker    # Containers
     fd        # Better find
+    file      # file...
     entr      # Generic run command on file modification
     helix     # Editor
     hexyl     # Better xxd
     htop      # Process monitoring
     gnumake   # make
+    jq        # JSON utility
     man-pages # Man pages
     man-pages-posix # Man pages
     less      # Less is more
