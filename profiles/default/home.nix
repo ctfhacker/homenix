@@ -3,8 +3,6 @@
 let
   i3_mod = "Mod1"; # Left Alt/Option
   has_gui = true;
-  # rustOverlay = builtins.fetchTarball "https://github.com/oxalica/rust-overlay/archive/master.tar.gz";
-  # pkgs.overlays = [ rustOverlay.overlays.default ];
 in {
   # Use home manager
   programs.home-manager.enable = true;
@@ -57,16 +55,6 @@ in {
     virt-manager
     libvirt
     qemu
-
-    # Rust
-    # rustc
-    # cargo
-    # cargo-watch
-    # rustfmt
-    # clippy
-
-    rust-bin.nightly.latest.default
-    rust-analyzer
 
     # Vulndev
     (pkgs.callPackage ../../packages/binaryninja {})
@@ -218,6 +206,7 @@ in {
       "xxd" = "hexyl";
       "reload" = "source ~/.bash_profile";
       "mirror" = "xrandr --output eDP-1 --mode 1920x1080 --output HDMI-1 --mode 1920x1080 --same-as eDP-1";
+      "cargo_init" = "nix run github:ctfhacker/cargo_init";
     };
   };
 
@@ -378,6 +367,9 @@ in {
         theme = "solarized-dark";
         icons = "none";
         blocks = [
+          {
+            block = "sound";
+          }
           {
             block = "battery";
           }
