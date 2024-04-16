@@ -291,6 +291,9 @@ in {
       cob = "checkout -b";
       d = "diff --color=always";
     };
+    extraConfig = {
+      core.editor = "hx";
+    };
   };
 
   programs.helix = {
