@@ -38,6 +38,7 @@ in {
         ipdb
         pip
         python-lsp-server
+        mypy
       ]
     ))
 
@@ -302,6 +303,7 @@ in {
       theme = "solarized_dark";
 
       editor = {
+        bufferline = "multiple";
         line-number = "relative";
         color-modes = true;
         true-color = true;
@@ -360,6 +362,11 @@ in {
         j.k = "normal_mode";
       };
     };
+
+    languages.language = [{
+      name = "html";
+      file-types = ["html" "htm" "shtml" "xhtml" "xht" "jsp" "asp" "aspx" "jshtm" "volt" "rhtml" "tpl"];
+    }];
   };
 
 
