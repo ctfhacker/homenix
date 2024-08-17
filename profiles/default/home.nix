@@ -15,9 +15,12 @@ in {
     bacon     # Rust command runner/tester
     bat       # Better cat
     cmake     # Build stuff..
+    cmus      # Console music player
     docker    # Containers
     fd        # Better find
     file      # file...
+    ffmpeg    # Video/audio fun
+    flameshot # Screenshots
     entr      # Generic run command on file modification
     helix     # Editor
     hexyl     # Better xxd
@@ -31,6 +34,7 @@ in {
     nil       # Nix Language Server
     ripgrep   # Better grep
     unzip     # unzip
+    xclip     # Clipboard manipulation
     zip       # zip
     (python3.withPackages (ps:
       with ps; [
@@ -57,8 +61,12 @@ in {
     libvirt
     qemu
 
+    # Fonts
+    liberation_ttf
+    dejavu_fonts
+
     # Vulndev
-    (pkgs.callPackage ../../packages/binaryninja {})
+    # (pkgs.callPackage ../../packages/binaryninja {})
   ] 
   ++ lib.optionals stdenv.isLinux [
     xorg.libX11
@@ -201,7 +209,8 @@ in {
       "ll" = "lsd -la";
       "tree" = "lsd -la --tree";
       "goto_nix" = "for f in $(sudo ddcutil detect  | rg i2c | rev | cut -d'-' -f1 | rev); do sudo ddcutil --bus $f setvcp 60 15; done";
-      "goto_mac" = "for f in $(sudo ddcutil detect  | rg i2c | rev | cut -d'-' -f1 | rev); do sudo ddcutil --bus $f setvcp 60 17; done";
+      # "goto_mac" = "for f in $(sudo ddcutil detect  | rg i2c | rev | cut -d'-' -f1 | rev); do sudo ddcutil --bus $f setvcp 60 17; done";
+      "goto_mac" = "sudo ddcutil --bus 10 setvcp 60 17";
       "pull_nix" = "pushd ~/homenix ; git stash ; git pull ; git stash apply ; home-manager switch --flake .#user ; popd";
       "nixnix" = "source $HOME/.nix-profile/etc/profile.d/nix.sh";
       "xxd" = "hexyl";
