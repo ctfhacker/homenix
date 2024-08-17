@@ -12,7 +12,7 @@
     pkgs = nixpkgs.legacyPackages.${system} // {
       overlays = [ (import inputs.rust-overlay) ];
     };
-  in {
+  in rec {
     # NixOS configuration entrypoint
     # Available through 'nixos-rebuild --flake .#your-hostname'
     nixosConfigurations = {
@@ -45,6 +45,10 @@
           (./. + "/profiles" + ("/" + profile) + "/home.nix")
         ];
       };
+    };
+
+    devShells.x86_64-linux.default = pkgs.mkShell {
+      buildInputs = homeConfigurations.user.config.home.packages;
     };
   };
 
