@@ -19,6 +19,9 @@
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
   networking.hostName = "nixos"; # Define your hostname.
+  networking.extraHosts = ''
+    127.0.0.1 cernvax.cern.ch
+  '';
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
   # Configure network proxy if necessary
@@ -121,6 +124,7 @@
     fira-code
     fira-code-symbols
     font-awesome
+    liberation_ttf
   ];
 
   # home-manager = {
@@ -163,6 +167,18 @@
       expat
     ];
   };
+
+  # OBS Studio config with virtualcam
+  # https://nixos.wiki/wiki/OBS_Studio
+  boot.extraModulePackages = with config.boot.kernelPackages; [
+    v4l2loopback
+  ];
+  boot.extraModprobeConfig = ''
+    options v4l2loopback devices=1 video_nr=1 card_label="OBS Cam" exclusive_caps=1
+  '';
+  security.polkit.enable = true;
+
+  boot.binfmt.emulatedSystems = [ "riscv64-linux" "aarch64-linux" ];
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.

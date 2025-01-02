@@ -9,13 +9,13 @@ in {
 
   home.username = username;
   home.homeDirectory = "/home/" + username;
-  home.stateVersion = "23.11";
+  home.stateVersion = "24.05";
   home.packages = with pkgs; [
-    alacritty # Terminal emulator
     bacon     # Rust command runner/tester
     bat       # Better cat
     cmake     # Build stuff..
     cmus      # Console music player
+    delta     # Diff
     docker    # Containers
     fd        # Better find
     file      # file...
@@ -25,10 +25,13 @@ in {
     helix     # Editor
     hexyl     # Better xxd
     htop      # Process monitoring
+    glow      # Terminal markdown renderer
     gnumake   # make
+    jless     # less for json
     jq        # JSON utility
     man-pages # Man pages
     man-pages-posix # Man pages
+    musescore # Music edit
     less      # Less is more
     lsd       # Better ls
     nil       # Nix Language Server
@@ -57,16 +60,16 @@ in {
     stdenv.cc.cc.lib
 
     # Virtualization
-    virt-manager
-    libvirt
-    qemu
+    # virt-manager
+    # libvirt
+    # qemu
 
     # Fonts
     liberation_ttf
     dejavu_fonts
 
     # Vulndev
-    # (pkgs.callPackage ../../packages/binaryninja {})
+    (pkgs.callPackage ../../packages/binaryninja {})
   ] 
   ++ lib.optionals stdenv.isLinux [
     xorg.libX11
@@ -126,9 +129,18 @@ in {
     # };
   # };
 
+
   ####################################################################
   ### Programs to enable                                           ###
   ####################################################################
+  programs.alacritty = {
+    enable = true;
+
+    settings = {
+      selection.save_to_clipboard = true;
+      };
+  };
+
   programs.autorandr = {
     enable = has_gui;
 
@@ -216,7 +228,7 @@ in {
       "xxd" = "hexyl";
       "reload" = "source ~/.bash_profile";
       "mirror" = "xrandr --output eDP-1 --mode 1920x1080 --output HDMI-1 --mode 1920x1080 --same-as eDP-1";
-      "cargo_init" = "nix run github:ctfhacker/cargo_init";
+      "cargo_init" = "nix flake new --template github:ctfhacker/cargo_init#rust";
     };
   };
 
@@ -301,8 +313,26 @@ in {
       cob = "checkout -b";
       d = "diff --color=always";
     };
+
     extraConfig = {
+      core.autocrlf = "input";
+      core.fscache = true;
       core.editor = "hx";
+      core.pager = "delta";
+      core.symlinks = true;
+
+      pull.rebase = false;
+
+      delta.navigate = true;
+      delta.line-numbers = true;
+      delta.side-by-side = false;
+
+      diff.colorMoved = "default";
+
+      init.defaultbranch = "main";
+
+      interactive.diffFilter = "delta --color-only";
+      merge.conflictstyle = "diff3";
     };
   };
 
@@ -326,6 +356,7 @@ in {
         rulers = [ 110 ];
         smart-tab.enable = true;
         soft-wrap.enable = true;
+        auto-pairs = false;
         statusline = {
           left = [
             "mode"
