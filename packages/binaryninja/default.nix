@@ -11,7 +11,7 @@ stdenv.mkDerivation {
   src = requireFile {
     name = "BinaryNinja-dev.zip";
     url = "https://binary.ninja";
-    sha256 = "0hy6a6dlxvf56vsbnrsm9nmm9sy2c9ph15abkg9ns898v87ilzdj";
+    sha256 = "c5f712d8b00aa7bb706cc1bed449371163926dd2f42039e20a1f8b2f64e7865d";
   };
 
   nativeBuildInputs = [
@@ -54,6 +54,7 @@ stdenv.mkDerivation {
     "libQt6Qml.so.6"
     "libQt6Widgets.so.6"
     "libQt6PrintSupport.so.6"
+    "libQt6ShaderTools.so.6"
   ];
 
   installPhase = ''
