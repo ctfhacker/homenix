@@ -3,6 +3,7 @@
 let
   i3_mod = "Mod1"; # Left Alt/Option
   has_gui = true;
+  my_helix = inputs.helix.packages.x86_64-linux.default;
 in {
   # Use home manager
   programs.home-manager.enable = true;
@@ -22,7 +23,7 @@ in {
     ffmpeg    # Video/audio fun
     flameshot # Screenshots
     entr      # Generic run command on file modification
-    helix     # Editor
+    my_helix  # Editor
     hexyl     # Better xxd
     htop      # Process monitoring
     glow      # Terminal markdown renderer
@@ -338,6 +339,7 @@ in {
 
   programs.helix = {
     enable = true;
+    package = my_helix;
     settings = {
       theme = "solarized_dark";
 
@@ -386,6 +388,8 @@ in {
           # characters.newline = "⏎";
           characters.tabpad = "-";
         };
+        end-of-line-diagnostics = "hint";
+        inline-diagnostics.cursor-line = "warning";
       };
 
       keys.normal = {
