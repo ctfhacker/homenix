@@ -73,6 +73,8 @@
     # Rust overlay for Rust nightly
     rust-overlay.url = "github:oxalica/rust-overlay";
     rust-overlay.inputs.nixpkgs.follows = "nixpkgs";
+
+    helix.url = "github:helix-editor/helix?tag=25.01";
   };
 
 }
