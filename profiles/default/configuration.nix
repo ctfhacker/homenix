@@ -16,7 +16,14 @@
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-  boot.kernelPackages = pkgs.linuxPackages_latest;
+  boot.kernelPackages = pkgs.linuxPackages_6_13;
+  boot.kernelPatches = [
+    {
+      name = "Rust";
+      patch = null;
+      features = { rust = true; };
+    }
+  ];
 
   networking.hostName = "nixos"; # Define your hostname.
   networking.extraHosts = ''
@@ -31,9 +38,7 @@
   # Enable networking
   networking.networkmanager.enable = true;
 
-  # sound.enable = true;
-  hardware.pulseaudio.enable = lib.mkForce false;
-  sound.enable = false;
+  hardware.pulseaudio.enable = false;
   security.rtkit.enable = config.services.pipewire.enable;
   services.pipewire = {
     enable = true;
@@ -148,9 +153,8 @@
   virtualisation.docker.enable = true;
   virtualisation.libvirtd.enable = true;
 
-  programs.steam = {
-    enable = true;
-  };
+  # Enable gaming
+  programs.steam.enable = true;
 
   programs.nix-ld = {
     enable = true;
@@ -205,5 +209,6 @@
   # this value at the release version of the first install of this system.
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "23.11"; # Did you read the comment?
+  # system.stateVersion = "24.11"; # Did you read the comment?
+  system.stateVersion = "unstable"; # Did you read the comment?
 }
