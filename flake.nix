@@ -62,7 +62,7 @@
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
     # NUR
-    nur.url = "github:nix-community/NUR";
+    # nur.url = "github:nix-community/NUR";
 
     # Firefox-addons
     firefox-addons = {
@@ -74,7 +74,6 @@
     rust-overlay.url = "github:oxalica/rust-overlay";
     rust-overlay.inputs.nixpkgs.follows = "nixpkgs";
 
-    helix.url = "github:helix-editor/helix?tag=25.01";
+    helix.url = "github:helix-editor/helix?tag=25.01.1";
   };
-
 }

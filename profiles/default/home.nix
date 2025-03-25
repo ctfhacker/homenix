@@ -10,7 +10,7 @@ in {
 
   home.username = username;
   home.homeDirectory = "/home/" + username;
-  home.stateVersion = "24.11";
+  home.stateVersion = "25.05";
   home.packages = with pkgs; [
     bacon     # Rust command runner/tester
     bat       # Better cat
@@ -51,7 +51,7 @@ in {
     ))
 
     # Debugger
-    pwndbg
+    # pwndbg
     radare2   # CLI Disassembly
 
     # C
@@ -240,8 +240,8 @@ in {
     nix-direnv.enable = true;
   };
 
-  programs.firefox.enable = has_gui;
   programs.firefox = {
+    enable = has_gui;
     profiles.user = {
         extensions = with inputs.firefox-addons.packages."x86_64-linux"; [
           bitwarden
