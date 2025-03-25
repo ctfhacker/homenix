@@ -1,7 +1,7 @@
 { 
   stdenv, autoPatchelfHook, makeWrapper, unzip, requireFile, python311, libGL, zlib, 
   xcbutilwm, xcbutilimage, xcbutilkeysyms, xcbutilrenderutil, libxkbcommon, freetype,
-  fontconfig, wayland-scanner, dbus,   
+  fontconfig, wayland-scanner, dbus, kdePackages,
   ... 
 }:
 
@@ -11,7 +11,7 @@ stdenv.mkDerivation {
   src = requireFile {
     name = "BinaryNinja-dev.zip";
     url = "https://binary.ninja";
-    sha256 = "c5f712d8b00aa7bb706cc1bed449371163926dd2f42039e20a1f8b2f64e7865d";
+    sha256 = "0pc6wxj2z2qz1bi3j87ls9nr4qqi6x4x9gn1diqbp9qan3c15xy5";
   };
 
   nativeBuildInputs = [
@@ -28,6 +28,11 @@ stdenv.mkDerivation {
   # error: auto-patchelf could not satisfy dependency libGL.so.1 
   # error: auto-patchelf could not satisfy dependency libz.so.1 
   # error: auto-patchelf could not satisfy dependency libfreetype.so.6 
+  # 
+  # Finding inputs:
+  # $ nix-shell -p nix-index
+  # $ nix-index
+  # $ nix-locate libQt6Qml.so.6
   buildInputs = [
     dbus
     libGL             # libGL.so.1
@@ -41,6 +46,9 @@ stdenv.mkDerivation {
     freetype          # libfreetype.so.6  
     fontconfig.lib
     wayland-scanner.out
+    kdePackages.qtdeclarative.out # libQt6Qml.so.6
+    kdePackages.qtshadertools.out # libQt6ShaderTools.so.6
+    kdePackages.wayland.out       # libwayland-client.so.0
     (python311.withPackages (ps:
       with ps; [
         ipython
