@@ -11,6 +11,7 @@
     # ---- OTHER VARS ----
     pkgs = nixpkgs.legacyPackages.${system} // {
       overlays = [ (import inputs.rust-overlay) ];
+      config.allowUnfree = true;
     };
   in rec {
     # NixOS configuration entrypoint
@@ -74,6 +75,9 @@
     rust-overlay.url = "github:oxalica/rust-overlay";
     rust-overlay.inputs.nixpkgs.follows = "nixpkgs";
 
-    helix.url = "github:helix-editor/helix?tag=25.01.1";
+    helix.url = "github:helix-editor/helix?tag=25.07.1";
+    pwndbg.url = "github:pwndbg/pwndbg";
+    starship-jj.url = "gitlab:lanastara_foss/starship-jj";
+    cursor.url = "github:omarcresp/cursor-flake/main";
   };
 }

@@ -1,9 +1,13 @@
-{ config, pkgs, lib, outputs, inputs, specialArgs, options, modulesPath, nixosConfig, osConfig, username }:
+{ config, pkgs, lib, outputs, inputs, specialArgs, options, modulesPath, nixosConfig, osConfig, username, _class, _prefix}:
 
 let
   i3_mod = "Mod1"; # Left Alt/Option
   has_gui = true;
   my_helix = inputs.helix.packages.x86_64-linux.default;
+  pwndbg = inputs.pwndbg.packages.x86_64-linux.default;
+  starship_jj = inputs.starship-jj.packages.x86_64-linux.default;
+  cursor = inputs.cursor.packages.x86_64-linux.default;
+  
 in {
   # Use home manager
   programs.home-manager.enable = true;
@@ -16,6 +20,7 @@ in {
     bat       # Better cat
     cmake     # Build stuff..
     cmus      # Console music player
+    cursor    # Cursor Editor
     delta     # Diff
     docker    # Containers
     fd        # Better find
@@ -28,8 +33,11 @@ in {
     htop      # Process monitoring
     glow      # Terminal markdown renderer
     gnumake   # make
+    google-chrome
     jless     # less for json
     jq        # JSON utility
+    jujutsu   # jj
+    lsp-ai
     man-pages # Man pages
     man-pages-posix # Man pages
     musescore # Music edit
@@ -37,6 +45,7 @@ in {
     lsd       # Better ls
     nil       # Nix Language Server
     ripgrep   # Better grep
+    starship_jj # JJ integration into starship
     unzip     # unzip
     xclip     # Clipboard manipulation
     zip       # zip
@@ -50,8 +59,12 @@ in {
       ]
     ))
 
+    (writeShellScriptBin "x-www-browser" ''
+      exec firefox "$@"
+    '')
+
     # Debugger
-    # pwndbg
+    pwndbg
     radare2   # CLI Disassembly
 
     # C
@@ -464,12 +477,50 @@ in {
     };
   };
 
+  programs.jujutsu = {
+    enable = true;
+    settings = {
+      user.name = "Cory Duplantis";
+      user.email = "cld251@gmail.com";
+
+      # Show only necessary bits for the unique prefix changeset
+      template-aliases = {
+        "format_short_change_id(id)" = "id.shortest()";
+      };
+
+      revset-aliases = {
+        "immutable_heads()" = "builtin_immutable_heads() | remote_bookmarks()";
+      };
+      
+      aliases = {
+        pull = ["git" "fetch"];
+        push = ["git" "push" "--allow-new"];
+      };
+
+      # Enable `delta` as the difftool for `jj`
+
+      diff.tool = "delta";
+      ui = {
+        diff-formatter = ":git";
+        pager = ["delta" "--pager" "less -FRX"];
+      };
+    };
+  };
+
   programs.starship = {
     enable = true;
     settings = {
       username.show_always = true;
       memory_usage.disabled = false;
       time.disabled = false;
+      custom.jj = {
+        command = "prompt";
+        format = "$output";
+        ignore_timeout = true;
+        use_stdin = false;
+        when = true;
+        shell = ["starship-jj" "--ignore-working-copy" "starship"];
+      };
     };
   };
 
