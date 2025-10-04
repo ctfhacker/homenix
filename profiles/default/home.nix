@@ -1,93 +1,101 @@
-{ config, pkgs, lib, outputs, inputs, specialArgs, options, modulesPath, nixosConfig, osConfig, username, _class, _prefix}:
+{ config, pkgs, lib, outputs, inputs, specialArgs, options, modulesPath, nixosConfig, osConfig, username, _class, _prefix, ...}:
 
 let
+  inherit (pkgs) stdenv;
+
+  system = stdenv.hostPlatform.system;
+  isLinux = stdenv.isLinux;
+  isDarwin = stdenv.isDarwin;
+
   i3_mod = "Mod1"; # Left Alt/Option
   has_gui = true;
-  my_helix = inputs.helix.packages.x86_64-linux.default;
-  pwndbg = inputs.pwndbg.packages.x86_64-linux.default;
-  starship_jj = inputs.starship-jj.packages.x86_64-linux.default;
-  cursor = inputs.cursor.packages.x86_64-linux.default;
-  
+
+  packageFor = pkgSet: default:
+    let
+      systemPkgs = lib.attrByPath [ system ] null pkgSet;
+    in if systemPkgs == null then default else lib.attrByPath [ "default" ] default systemPkgs;
+
+  my_helix = packageFor inputs.helix.packages pkgs.helix;
+  pwndbg = packageFor inputs.pwndbg.packages null;
+  starship_jj = packageFor inputs.starship-jj.packages null;
+  cursor = packageFor inputs.cursor.packages null;
+  firefoxAddons = lib.attrByPath [ system ] {} inputs.firefox-addons.packages;
+
+  optionalInputPkgs = builtins.filter (pkg: pkg != null) [ my_helix starship_jj ];
+  optionalLinuxPkgs = builtins.filter (pkg: pkg != null) [ pwndbg cursor ];
+
 in {
   # Use home manager
   programs.home-manager.enable = true;
 
   home.username = username;
-  home.homeDirectory = "/home/" + username;
+  home.homeDirectory = if isDarwin then "/Users/${username}" else "/home/" + username;
   home.stateVersion = "25.05";
-  home.packages = with pkgs; [
-    bacon     # Rust command runner/tester
-    bat       # Better cat
-    cmake     # Build stuff..
-    cmus      # Console music player
-    cursor    # Cursor Editor
-    delta     # Diff
-    docker    # Containers
-    fd        # Better find
-    file      # file...
-    ffmpeg    # Video/audio fun
-    flameshot # Screenshots
-    entr      # Generic run command on file modification
-    my_helix  # Editor
-    hexyl     # Better xxd
-    htop      # Process monitoring
-    glow      # Terminal markdown renderer
-    gnumake   # make
-    google-chrome
-    jless     # less for json
-    jq        # JSON utility
-    jujutsu   # jj
-    lsp-ai
-    man-pages # Man pages
-    man-pages-posix # Man pages
-    musescore # Music edit
-    less      # Less is more
-    lsd       # Better ls
-    nil       # Nix Language Server
-    ripgrep   # Better grep
-    starship_jj # JJ integration into starship
-    unzip     # unzip
-    xclip     # Clipboard manipulation
-    zip       # zip
-    (python3.withPackages (ps:
-      with ps; [
-        ipython
-        ipdb
-        pip
-        python-lsp-server
-        mypy
-      ]
-    ))
+  home.packages =
+    let
+      common = with pkgs; [
+        bacon
+        bat
+        cmake
+        delta
+        entr
+        fd
+        file
+        ffmpeg
+        glow
+        hexyl
+        gnumake
+        htop
+        jless
+        jq
+        jujutsu
+        less
+        lsd
+        nil
+        radare2
+        ripgrep
+        starship
+        tmux
+        unzip
+        zip
+        clang
+        clang-tools_16
+        liberation_ttf
+        dejavu_fonts
+        (python3.withPackages (ps:
+          with ps; [
+            ipython
+            ipdb
+            pip
+            python-lsp-server
+            mypy
+          ]))
+      ] ++ optionalInputPkgs;
 
-    (writeShellScriptBin "x-www-browser" ''
-      exec firefox "$@"
-    '')
+      linuxOnly = with pkgs; [
+        cmus
+        docker
+        flameshot
+        google-chrome
+        lsp-ai
+        man-pages
+        man-pages-posix
+        musescore
+        xclip
+        stdenv.cc.cc.lib
+        (writeShellScriptBin "x-www-browser" ''
+          exec firefox "$@"
+        '')
+        (pkgs.callPackage ../../packages/binaryninja {})
+        vscode-extensions.llvm-org.lldb-vscode
+      ] ++ optionalLinuxPkgs;
 
-    # Debugger
-    pwndbg
-    radare2   # CLI Disassembly
-
-    # C
-    clang          # Compiler
-    clang-tools_16 # clangd, clang-format
-    vscode-extensions.llvm-org.lldb-vscode # Debug adapter for helix
-    stdenv.cc.cc.lib
-
-    # Virtualization
-    # virt-manager
-    # libvirt
-    # qemu
-
-    # Fonts
-    liberation_ttf
-    dejavu_fonts
-
-    # Vulndev
-    (pkgs.callPackage ../../packages/binaryninja {})
-  ] 
-  ++ lib.optionals stdenv.isLinux [
-    xorg.libX11
-  ];
+      darwinOnly = with pkgs; [
+      ];
+    in common
+    ++ lib.optionals isLinux linuxOnly
+    ++ lib.optionals isDarwin darwinOnly
+    ++ lib.optionals isLinux [ pkgs.xorg.libX11 ];
 
   # Enable vim mode in bash with a couple custom keybindings
   home.file.".inputrc".text = ''
@@ -107,7 +115,7 @@ in {
   set expand-tilde on
   '';
  
-  xsession.windowManager.i3 = {
+  xsession.windowManager.i3 = lib.mkIf (has_gui && isLinux) {
     enable = true;
     config = {
       modifier = i3_mod;
@@ -155,8 +163,8 @@ in {
       };
   };
 
-  programs.autorandr = {
-    enable = has_gui;
+  programs.autorandr = lib.mkIf (has_gui && isLinux) {
+    enable = true;
 
     profiles = {
       "default" = {
@@ -216,7 +224,7 @@ in {
     };
   };
 
-  programs.bash = {
+  programs.bash = lib.mkIf isLinux {
     enable = true;
     bashrcExtra = ''
     if [ "$TMUX" = "" ]; then TERM=screen-256color; tmux -2; fi
@@ -249,14 +257,62 @@ in {
   # Enable direnv to allow switching nix-shells on going to a new directory
   programs.direnv = {
     enable = true;
-    enableBashIntegration = true;
+    enableBashIntegration = isLinux;
+    enableZshIntegration = isDarwin;
     nix-direnv.enable = true;
   };
 
-  programs.firefox = {
-    enable = has_gui;
+  programs.zsh = lib.mkIf isDarwin {
+    enable = true;
+    autocd = true;
+    shellAliases = {
+      ll = "ls -la";
+      vim = "hx";
+      gs = "git status";
+      home-switch = "darwin-rebuild switch --flake ~/homenix#MacBook-Pro";
+      hm-switch = "home-manager switch --flake ~/homenix#${username}-macos";
+      
+    };
+    initExtra = ''
+# Enable vi keybindings
+bindkey -v
+
+# Command mode keybindings
+bindkey -M vicmd 'H' beginning-of-line
+bindkey -M vicmd 'L' end-of-line
+
+# History search (prefix search like in Bash)
+autoload -Uz history-search-end
+zle -N history-search-end
+bindkey -M vicmd 'k' up-line-or-history
+bindkey -M vicmd 'j' down-line-or-history
+
+# Insert mode keybinding: 'jk' to leave insert mode
+function vi-insert-exit() {
+  zle vi-cmd-mode
+}
+zle -N vi-insert-exit
+# --- Bind "jk" to exit insert mode ---
+bindkey -M viins 'jk' vi-insert-exit
+
+# --- Optional: make timeout for multi-key sequences reasonable ---
+# Default is 40 (milliseconds) — too short!  Set to ~500ms.
+KEYTIMEOUT=10  # 10 * 10ms = 100ms delay window for combos
+
+# Expand tilde (~) automatically when typing paths
+setopt EXTENDED_GLOB
+setopt AUTO_NAME_DIRS
+setopt AUTO_CD
+
+eval "$(direnv hook zsh)"
+    '';
+  };
+
+  # programs.firefox = lib.mkIf (has_gui && isLinux) {
+  programs.firefox = lib.mkIf (has_gui) {
+    enable = true;
     profiles.user = {
-        extensions = with inputs.firefox-addons.packages."x86_64-linux"; [
+        extensions = with firefoxAddons; [
           bitwarden
           darkreader
           ublock-origin
@@ -427,7 +483,7 @@ in {
   };
 
 
-  programs.i3status-rust = {
+  programs.i3status-rust = lib.mkIf isLinux {
     enable = true;
     bars = {
       bottom = {
@@ -513,6 +569,7 @@ in {
       username.show_always = true;
       memory_usage.disabled = false;
       time.disabled = false;
+    } // lib.optionalAttrs (starship_jj != null) {
       custom.jj = {
         command = "prompt";
         format = "$output";
