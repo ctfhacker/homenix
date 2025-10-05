@@ -251,6 +251,7 @@ in {
       "reload" = "source ~/.bash_profile";
       "mirror" = "xrandr --output eDP-1 --mode 1920x1080 --output HDMI-1 --mode 1920x1080 --same-as eDP-1";
       "cargo_init" = "nix flake new --template github:ctfhacker/cargo_init#rust";
+      "jjl" = "jj log -r '::'";
     };
   };
 
