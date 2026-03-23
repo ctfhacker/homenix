@@ -18,11 +18,10 @@ let
   my_helix = packageFor inputs.helix.packages pkgs.helix;
   pwndbg = packageFor inputs.pwndbg.packages null;
   starship_jj = packageFor inputs.starship-jj.packages null;
-  cursor = packageFor inputs.cursor.packages null;
   firefoxAddons = lib.attrByPath [ system ] {} inputs.firefox-addons.packages;
 
   optionalInputPkgs = builtins.filter (pkg: pkg != null) [ my_helix starship_jj ];
-  optionalLinuxPkgs = builtins.filter (pkg: pkg != null) [ pwndbg cursor ];
+  optionalLinuxPkgs = builtins.filter (pkg: pkg != null) [ pwndbg  ];
 
 in {
   # Use home manager
@@ -37,6 +36,7 @@ in {
         bacon
         bat
         cmake
+        codex
         delta
         entr
         fd
@@ -551,7 +551,7 @@ eval "$(direnv hook zsh)"
       
       aliases = {
         pull = ["git" "fetch"];
-        push = ["git" "push" "--allow-new"];
+        push = ["git" "push" "--allow-new" "--bookmark"];
       };
 
       # Enable `delta` as the difftool for `jj`
